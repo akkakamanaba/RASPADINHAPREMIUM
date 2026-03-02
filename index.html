@@ -67,7 +67,6 @@ canvas{
 
 <script>
 
-// 🔑 15 KEYS
 const keys=[
 "DS-A1B2","DS-C3D4","DS-E5F6","DS-G7H8","DS-I9J0",
 "DS-K1L2","DS-M3N4","DS-O5P6","DS-Q7R8","DS-S9T0",
@@ -185,22 +184,27 @@ function finishGame(){
 
   const altos=["5M 💎","12M 💎","25M 💎","45M 💎"];
   const values=document.querySelectorAll(".value");
-  const canvases=document.querySelectorAll("canvas");
 
-  canvases.forEach(c=>c.remove());
+  // remover todos os canvases restantes
+  document.querySelectorAll("canvas").forEach(c=>c.remove());
 
-  let countAlto=0;
+  let restantes=[];
 
   values.forEach(v=>{
     if(v.innerHTML==="?"){
-      if(countAlto<4){
-        v.innerHTML=altos[countAlto];
-        countAlto++;
-      }else{
-        v.innerHTML=randomBaixo()+"K 💎";
-      }
+      restantes.push(v);
     }
   });
+
+  // garantir que temos exatamente 6 restantes
+  // colocar 4 altos primeiro
+  for(let i=0;i<restantes.length;i++){
+    if(i<4){
+      restantes[i].innerHTML=altos[i];
+    }else{
+      restantes[i].innerHTML=randomBaixo()+"K 💎";
+    }
+  }
 
   if(total>=1000){
     document.getElementById("result").innerText=
