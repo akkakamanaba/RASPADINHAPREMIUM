@@ -83,8 +83,6 @@ const keys=[
 let scratches=0;
 let total=0;
 
-const premiosBaixos=[300000,400000,500000,600000,700000];
-
 function checkKey(){
   const k=document.getElementById("keyInput").value.trim();
   if(!keys.includes(k)){
@@ -103,23 +101,29 @@ function startGame(){
   total=0;
   document.getElementById("result").innerText="";
 
-  // Criar array com 3 baixos + 2 médios + 1 prêmio gigante
-  let premios=[
-    ...premiosBaixos.sort(()=>0.5-Math.random()).slice(0,3),
-    1000000,
-    3000000,
-    5000000 // sempre terá 5M
-  ];
+  let premios=[];
 
-  // embaralhar
+  // 3 ganháveis (360K a 520K)
+  for(let i=0;i<3;i++){
+    premios.push(Math.floor(Math.random()*161)+360);
+  }
+
+  // 6 não ganháveis (valores maiores)
+  premios.push(750);
+  premios.push(820);
+  premios.push(900);
+  premios.push(1000);
+  premios.push(1200);
+  premios.push(1500);
+
   premios=premios.sort(()=>0.5-Math.random());
 
-  premios.forEach((valor,index)=>{
-    createCard(valor,index);
+  premios.forEach(valor=>{
+    createCard(valor);
   });
 }
 
-function createCard(value,index){
+function createCard(value){
 
   const card=document.createElement("div");
   card.className="card";
@@ -131,7 +135,12 @@ function createCard(value,index){
   text.style.display="flex";
   text.style.alignItems="center";
   text.style.justifyContent="center";
-  text.innerHTML=(value/1000000)+"M 💎";
+
+  if(value>=1000){
+    text.innerHTML=(value/1000).toFixed(1)+"M 💎";
+  }else{
+    text.innerHTML=value+"K 💎";
+  }
 
   const canvas=document.createElement("canvas");
   canvas.width=100;
@@ -168,16 +177,16 @@ function createCard(value,index){
       canvas.remove();
       scratches++;
 
-      // Só soma se for prêmio baixo
-      if(premiosBaixos.includes(value)){
+      // só soma se for prêmio entre 360 e 520
+      if(value>=360 && value<=520){
         total+=value;
       }
 
       if(scratches===3){
         document.getElementById("result").innerText=
-        "Você ganhou "+(total/1000000)+"M gemas";
+        "Você ganhou "+(total/1000).toFixed(2)+"M gemas";
 
-        // Revelar automaticamente os outros
+        // revelar automaticamente os outros
         document.querySelectorAll("canvas").forEach(c=>{
           c.remove();
         });
