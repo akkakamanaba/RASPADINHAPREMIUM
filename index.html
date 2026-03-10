@@ -103,34 +103,23 @@ font-size:20px;
 <script>
 
 const keys=[
-"DS-F7K2",
-"DS-R4M9",
-"DS-T8L3",
-"DS-Q2W6",
-"DS-H5N1",
-"DS-P9C4",
-"DS-Z6B8",
-"DS-X3D7",
-"DS-J1V5",
-"DS-A8S2",
-"DS-E4G9",
-"DS-U7Y3",
-"DS-K6T8",
-"DS-M2L4",
-"DS-B9Q7",
-"DS-W5C1",
-"DS-N8F6",
-"DS-Y3R2",
-"DS-G4P9",
-"DS-D7V5"
+"DS-F7K2","DS-R4M9","DS-T8L3","DS-Q2W6","DS-H5N1",
+"DS-P9C4","DS-Z6B8","DS-X3D7","DS-J1V5","DS-A8S2"
 ];
 
-const premiosGanhos=[
+const premiosBaixos=[
 "1M 💎",
 "1.2M 💎",
 "1.3M 💎",
 "1.4M 💎",
 "1.5M 💎"
+];
+
+const premiosAltos=[
+"8M 💎",
+"17M 💎",
+"33M 💎",
+"45M 💎"
 ];
 
 let scratched=false;
@@ -142,11 +131,6 @@ const k=document.getElementById("keyInput").value.trim();
 
 if(!keys.includes(k)){
 document.getElementById("msg").innerText="Key inválida";
-return;
-}
-
-if(localStorage.getItem("used_"+k)){
-document.getElementById("msg").innerText="Essa key já foi usada!";
 return;
 }
 
@@ -168,36 +152,22 @@ scratched=false;
 
 document.getElementById("result").innerText="";
 
-const premioReal=premiosGanhos[Math.floor(Math.random()*premiosGanhos.length)];
-
-let valores=[];
-
-valores.push(premioReal);
-
-for(let i=1;i<9;i++){
-
-valores.push(premiosGanhos[Math.floor(Math.random()*premiosGanhos.length)]);
-
-}
-
-valores.sort(()=>Math.random()-0.5);
-
 for(let i=0;i<9;i++){
 
-createCard(valores[i]);
+createCard();
 
 }
 
 }
 
-function createCard(valor){
+function createCard(){
 
 const card=document.createElement("div");
 card.className="card";
 
 const valueDiv=document.createElement("div");
 valueDiv.className="value";
-valueDiv.innerHTML=valor;
+valueDiv.innerHTML="?";
 
 const canvas=document.createElement("canvas");
 
@@ -211,12 +181,11 @@ ctx.fillRect(0,0,100,100);
 
 ctx.globalCompositeOperation="destination-out";
 
-let revealed=false;
 let holding=false;
 
 function scratch(e){
 
-if(!holding || revealed || scratched) return;
+if(!holding || scratched) return;
 
 e.preventDefault();
 
@@ -239,12 +208,15 @@ if(pixels[i]===0) count++;
 
 if(count>150){
 
-revealed=true;
 scratched=true;
 
-canvas.remove();
+const premioBaixo=premiosBaixos[Math.floor(Math.random()*premiosBaixos.length)];
 
-finishGame(valor);
+valueDiv.innerHTML=premioBaixo;
+
+finishGame(premioBaixo);
+
+canvas.remove();
 
 }
 
@@ -267,11 +239,17 @@ document.getElementById("grid").appendChild(card);
 
 function finishGame(valor){
 
-localStorage.setItem("used_"+currentKey,"true");
+const cards=document.querySelectorAll(".value");
 
-const canvases=document.querySelectorAll("canvas");
+cards.forEach(c=>{
 
-canvases.forEach(c=>c.remove());
+if(c.innerHTML=="?"){
+
+c.innerHTML=premiosAltos[Math.floor(Math.random()*premiosAltos.length)];
+
+}
+
+});
 
 document.getElementById("result").innerHTML=
 "🎉 Você ganhou: <b>"+valor+"</b>";
