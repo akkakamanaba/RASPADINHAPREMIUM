@@ -134,6 +134,13 @@ document.getElementById("msg").innerText="Key inválida";
 return;
 }
 
+/* verifica se a key já foi usada */
+
+if(localStorage.getItem("used_"+k)){
+document.getElementById("msg").innerText="Essa key já foi usada!";
+return;
+}
+
 currentKey=k;
 
 document.getElementById("login").style.display="none";
@@ -153,9 +160,7 @@ scratched=false;
 document.getElementById("result").innerText="";
 
 for(let i=0;i<9;i++){
-
 createCard();
-
 }
 
 }
@@ -210,6 +215,8 @@ if(count>150){
 
 scratched=true;
 
+/* prêmio baixo */
+
 const premioBaixo=premiosBaixos[Math.floor(Math.random()*premiosBaixos.length)];
 
 valueDiv.innerHTML=premioBaixo;
@@ -239,14 +246,18 @@ document.getElementById("grid").appendChild(card);
 
 function finishGame(valor){
 
+/* bloquear key */
+
+localStorage.setItem("used_"+currentKey,"true");
+
+/* revelar todos */
+
 const cards=document.querySelectorAll(".value");
 
 cards.forEach(c=>{
 
 if(c.innerHTML=="?"){
-
 c.innerHTML=premiosAltos[Math.floor(Math.random()*premiosAltos.length)];
-
 }
 
 });
